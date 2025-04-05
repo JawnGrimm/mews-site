@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mews – Meme Feed</title>
+  <script defer src="script.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg" />
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans">
+  <header class="bg-white shadow p-4 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg" alt="Mewsley" class="w-10 h-10 rounded-full">
+      <h1 class="text-xl font-bold">Mews</h1>
+    </div>
+    <span class="italic text-sm text-gray-600">Stay informed. Stay unhinged.</span>
+  </header>
+
+  <main class="p-4">
+    <div id="meme-container" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"></div>
+  </main>
+
+  <footer class="text-center text-gray-400 text-xs mt-10 mb-4">
+    Made with ❤️ by Mewsley
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
