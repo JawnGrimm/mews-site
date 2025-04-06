@@ -1,0 +1,99 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const newsContainer = document.getElementById('news-container');
+
+    fetch('news_data.json') // Fetch the local JSON file
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Could not load news data: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(newsItems => {
+            newsContainer.innerHTML = ''; // Clear loading message
+
+            if (!newsItems || newsItems.length === 0) {
+                newsContainer.innerHTML = '<p>No news items available right now.</p>';
+                return;
+            }
+
+            newsItems.forEach(item => {
+                const article = document.createElement('article');
+                article.className = 'news-article'; // For CSS styling
+
+                // --- Image (Add this section) ---
+                if (item.ImageURL) { // Check if ImageURL exists and is not empty
+                    const imgLink = document.createElement('a'); // Make image clickable
+                    imgLink.href = item.URL || '#'; // Link image to the article URL
+                    imgLink.target = '_blank';
+                    imgLink.rel = 'noopener noreferrer';
+
+                    const img = document.createElement('img');
+                    img.src = item.ImageURL;
+                    // Add alt text - good for accessibility. Use headline or caption.
+                    img.alt = item.Headline || item['Meme Caption'] || 'News Image';
+                    img.className = 'news-image'; // Add class for styling
+                    // Optional: Add error handling for broken images
+                    img.onerror = function() {
+                        this.style.display='none'; // Hide broken image icon
+                        // Optionally display a placeholder or nothing
+                    };
+                    imgLink.appendChild(img);
+                    article.appendChild(imgLink); // Add image link container first
+                }
+                // --- End Image Section ---
+
+
+                // --- Headline ---
+                const title = document.createElement('h2');
+                const link = document.createElement('a');
+                // Use item.URL (matching the header)
+                link.href = item.URL || '#';
+                 // Use item.Headline (matching the header)
+                link.textContent = item.Headline || 'No Title Provided';
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                title.appendChild(link);
+                article.appendChild(title); // Add headline after image
+
+                // --- Meme Caption ---
+                // Use item['Meme Caption'] (bracket notation because of the space)
+                if (item['Meme Caption']) { // Only add if caption exists
+                    const caption = document.createElement('p');
+                    caption.className = 'news-caption'; // Add class for styling
+                    caption.textContent = item['Meme Caption'];
+                    article.appendChild(caption); // Add caption after headline
+                }
+
+                // --- Footer (Source and Timestamp) ---
+                const footer = document.createElement('footer');
+                const sourceSpan = document.createElement('span');
+                 // Use item.Source (matching the header)
+                sourceSpan.textContent = `Source: ${item.Source || 'Unknown'}`;
+                const dateSpan = document.createElement('span');
+                 // Use item.Timestamp (matching the header)
+                if (item.Timestamp) {
+                    try {
+                        // Attempt basic date formatting. Consider a library like date-fns for better results
+                        dateSpan.textContent = new Date(item.Timestamp).toLocaleDateString();
+                    } catch(e) {
+                        // If parsing fails (e.g., non-standard format), display raw timestamp
+                        dateSpan.textContent = item.Timestamp;
+                        console.warn(`Could not parse timestamp: ${item.Timestamp}`);
+                    }
+                } else {
+                    dateSpan.textContent = ''; // No timestamp provided
+                }
+
+                footer.appendChild(sourceSpan);
+                footer.appendChild(dateSpan);
+                article.appendChild(footer); // Add footer last
+
+                // Append the complete article card to the main container
+                newsContainer.appendChild(article);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching or displaying news:', error);
+            newsContainer.innerHTML = `<p>Error loading news data. Please check the console or try again later.</p><p style="color:red;">${error.message}</p>`;
+        });
+});
