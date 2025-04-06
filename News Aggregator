@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>News Aggregator</title>
+  <!-- Bootstrap CSS for basic styling -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Custom CSS styles */
+    body {
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+    .card {
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="mb-4">Latest News</h1>
+    <!-- Container for the news articles -->
+    <div id="articles"></div>
+  </div>
+  
+  <!-- Tabletop.js from CDN to fetch Google Sheet data -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.min.js"></script>
+  <script>
+    // Wait for the DOM to fully load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Use your published Google Sheet key below
+      var publicSpreadsheetUrl = '1PYdzyMwUZYCadxjK7Q-w2j2C97Pl6FLkScffTjTYgik';
+      
+      // Initialize Tabletop.js to fetch the data from the Google Sheet
+      Tabletop.init({
+        key: publicSpreadsheetUrl,
+        callback: function(data, tabletop) {
+          // Sort the articles by date in descending order (newest first)
+          data.sort(function(a, b) {
+            return new Date(b.Date) - new Date(a.Date);
+          });
+          // Render the sorted articles on the page
+          renderArticles(data);
+        },
+        simpleSheet: true
+      });
+    });
+
+    // Function to create and display article cards
+    function renderArticles(articles) {
+      var container = document.getElementById('articles');
+      
+      articles.forEach(function(article) {
+        // Create a Bootstrap card for each news article
+        var card = document.createElement('div');
+        card.className = 'card mb-3';
+        
+        var cardBody = document.createElement('div');
+        cardBody.className = 'card-body';
+        
+        // Create a clickable title that links to the full article
+        var title = document.createElement('h5');
+        title.className = 'card-title';
+        var link = document.createElement('a');
+        link.href = article.Link;
+        link.target = '_blank';
+        link.textContent = article.Title;
+        title.appendChild(link);
+        
+        // Create a paragraph to display the date and source of the article
+        var meta = document.createElement('p');
+        meta.className = 'card-text';
+        meta.innerHTML = '<small class="text-muted">' + article.Date + ' | ' + article.Source + '</small>';
+        
+        // Append title and meta info to the card body
+        cardBody.appendChild(title);
+        cardBody.appendChild(meta);
+        
+        // Append the card body to the card and then the card to the container
+        card.appendChild(cardBody);
+        container.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
